@@ -698,7 +698,6 @@ namespace libtorrent {
 		span<char> out = buf;
 
 		tracker_request const& req = tracker_req();
-		if (req.downloaded < 0 || req.event == event_t::completed) return; // **leecher_mod**: don't send anything if completed.
 		aux::session_settings const& settings = m_man.settings();
 
 		auto const i = m_connection_cache.find(m_target.address());
@@ -713,9 +712,9 @@ namespace libtorrent {
 		out = out.subspan(20);
 		std::copy(req.pid.begin(), req.pid.end(), out.data()); // peer_id
 		out = out.subspan(20);
-		aux::write_int64(int64_t(0), out); // **leecher_mod**: don't report downloaded
-		aux::write_int64(req.left, out); // left
-		aux::write_int64(int64_t(0), out); // **leecher_mod**: don't report uploaded
+		aux::write_int64(int64_t(0), out); // **seeder_mod**: don't report downloaded
+		aux::write_int64(int64_t(0), out); // **seeder_mod**: report 0 left
+		aux::write_int64(int64_t(0), out); // **seeder_mod**: don't report uploaded
 		aux::write_int32(req.event, out); // event
 		// ip address
 		address_v4 announce_ip;

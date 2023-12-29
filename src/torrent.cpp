@@ -3015,13 +3015,13 @@ namespace {
 		req.uploaded = m_stat.total_payload_upload();
 		req.corrupt = m_total_failed_bytes;
 
-		// **leecher_mod**
+		// **seeder_mod**
 		// report that it's still with the full monty to download,
 		// -1 otherwise. It will be used later to decide whether to report or not
 		// to the tracker. 
 		if (auto left = bytes_left(); left)
 		{
-			req.left = *left ? m_torrent_file->total_size() : -1;
+			req.left = 0; // I know it's been set elsewhere as well... but let's just ensure.
 		}
 		else
 		{

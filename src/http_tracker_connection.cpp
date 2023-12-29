@@ -75,11 +75,6 @@ namespace libtorrent {
 
 	void http_tracker_connection::start()
 	{
-		if (tracker_req().left < 0 || tracker_req().event == event_t::completed)
-		{
-			fail(errors::no_error, operation_t::unknown, "leechermod: not announcing due to completion");
-			return;
-		}
 		std::string url = tracker_req().url;
 
 		if (tracker_req().kind & tracker_request::scrape_request)
@@ -151,11 +146,11 @@ namespace libtorrent {
 				, tracker_req().listen_port
 				, int64_t(0) // **leecher_mod**: don't report uploaded
 				, int64_t(0) // **leecher_mod**: don't report downloaded
-				, tracker_req().left
+				, int64_t(0) // **seeder_mod**: 0 left to download
 				, tracker_req().corrupt
 				, tracker_req().key
-				, (tracker_req().event != event_t::none) ? "&event=" : ""
-				, (tracker_req().event != event_t::none) ? event_string[static_cast<int>(tracker_req().event) - 1] : ""
+				, "" // **seeder_mod**: don't report events
+				, "" // **seeder_mod**: don't report events
 				, tracker_req().num_want);
 			url += str;
 #if !defined TORRENT_DISABLE_ENCRYPTION
