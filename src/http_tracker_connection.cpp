@@ -75,6 +75,11 @@ namespace libtorrent {
 
 	void http_tracker_connection::start()
 	{
+		if (tracker_req().left < 0 || tracker_req().event == event_t::completed)
+		{
+			fail(errors::no_error, operation_t::unknown, "leechermod: not announcing due to completion");
+			return;
+		}
 		std::string url = tracker_req().url;
 
 		if (tracker_req().kind & tracker_request::scrape_request)
@@ -144,8 +149,8 @@ namespace libtorrent {
 				// the i2p tracker seems to verify that the port is not 0,
 				// even though it ignores it otherwise
 				, tracker_req().listen_port
-				, tracker_req().uploaded
-				, tracker_req().downloaded
+				, int64_t(0) // **leecher_mod**: don't report uploaded
+				, int64_t(0) // **leecher_mod**: don't report downloaded
 				, tracker_req().left
 				, tracker_req().corrupt
 				, tracker_req().key

@@ -3014,7 +3014,19 @@ namespace {
 		req.downloaded = m_stat.total_payload_download() - m_total_failed_bytes;
 		req.uploaded = m_stat.total_payload_upload();
 		req.corrupt = m_total_failed_bytes;
-		req.left = value_or(bytes_left(), 16*1024);
+
+		// **leecher_mod**
+		// report that it's still with the full monty to download,
+		// -1 otherwise. It will be used later to decide whether to report or not
+		// to the tracker. 
+		if (auto left = bytes_left(); left)
+		{
+			req.left = *left ? m_torrent_file->total_size() : -1;
+		}
+		else
+		{
+			req.left = 16*1024;
+		}
 #ifdef TORRENT_SSL_PEERS
 		// if this torrent contains an SSL certificate, make sure
 		// any SSL tracker presents a certificate signed by it
